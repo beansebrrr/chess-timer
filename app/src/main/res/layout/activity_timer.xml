@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".TimerActivity">
+
+    <Button
+        android:id="@+id/displayTimerOne"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:rotation="180"
+        android:textSize="36sp"
+        android:text="00:00.00"
+        android:fontFamily="monospace"
+        android:textStyle="bold"
+        app:cornerRadius="16dp" />
+
+    <com.google.android.material.button.MaterialButtonGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/Widget.Material3.MaterialButtonGroup.Connected"
+        android:spacing="4dp">
+        <Button
+            android:id="@+id/btnReset"
+            android:contentDescription="Reset Timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconGravity="textStart"
+            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
+            android:layout_weight="1"
+            app:icon="@drawable/baseline_restart_alt_24"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPauseStart"
+            android:contentDescription="Pause/Unpause Timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconGravity="textStart"
+            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
+            android:layout_weight="1"
+            app:icon="@drawable/baseline_pause_24"/>
+
+        <Button
+            android:id="@+id/btnExit"
+            android:contentDescription="Exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:iconGravity="textStart"
+            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
+            android:layout_weight="1"
+            app:icon="@drawable/baseline_exit_to_app_24"/>
+
+    </com.google.android.material.button.MaterialButtonGroup>
+
+    <Button
+        android:id="@+id/displayTimerTwo"
+        style="@style/Widget.Material3.Button"
+        android:text="00:00.00"
+        android:textSize="36sp"
+        android:fontFamily="monospace"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cornerRadius="16dp" />
+
+</LinearLayout>

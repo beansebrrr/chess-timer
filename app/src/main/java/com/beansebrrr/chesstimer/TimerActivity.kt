@@ -27,6 +27,7 @@ class TimerActivity : AppCompatActivity() {
     private lateinit var timerOne: CountDownTimerExt
     private lateinit var timerTwo: CountDownTimerExt
     private var timerDuration by Delegates.notNull<Long>()
+    private var timerIncrement by Delegates.notNull<Long>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,9 @@ class TimerActivity : AppCompatActivity() {
         }
         binding = ActivityTimerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         timerDuration = intent.getLongExtra("TIMER_DURATION", 300000)
+        timerIncrement = intent.getLongExtra("TIMER_INCREMENT", 5000)
 
 
         timerOne = object : CountDownTimerExt(timerDuration, 10) {
@@ -66,7 +69,17 @@ class TimerActivity : AppCompatActivity() {
         binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
         updatePauseBtnState()
 
-        binding.btnPauseStart.setOnClickListener { togglePauseTimers() }
+        binding.btnPauseStart.setOnClickListener {
+            if (!timerStarted) {
+                Toast.makeText(
+                    this,
+                    "Press one side to start the timer",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                togglePauseTimers()
+            }
+        }
         binding.btnExit.setOnClickListener {
             togglePauseTimers(true)
             MaterialAlertDialogBuilder(this)
@@ -112,10 +125,14 @@ class TimerActivity : AppCompatActivity() {
         } else {
             when (timer) {
                 Timer.ONE -> {
+                    val inc = timerOne.incrementTime(timerIncrement)
+                    binding.displayTimerOne.text = millisToTimeFormat(inc)
                     toggleTimerOne(true)
                     toggleTimerTwo(false)
                 }
                 Timer.TWO -> {
+                    val inc = timerTwo.incrementTime(timerIncrement)
+                    binding.displayTimerTwo.text = millisToTimeFormat(inc)
                     toggleTimerOne(false)
                     toggleTimerTwo(true)
                 }
@@ -125,15 +142,6 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun togglePauseTimers(pause: Boolean? = null) {
-        if (!timerStarted) {
-            Toast.makeText(
-                this,
-                "Press one side to start the timer",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
         // 90 if-statements lawd save me
         if (pause != null) {
             if (pause) { pauseAction() }
@@ -153,7 +161,11 @@ class TimerActivity : AppCompatActivity() {
         } else if (!isTimerOnePaused && isTimerTwoPaused) {
             switchTimerRunning(Timer.TWO)
         } else {
-            Toast.makeText(this, "Something sucky happened and you suck", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Something went wrong and I'm honestly not sure what",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         isPaused = false
     }
@@ -176,7 +188,6 @@ class TimerActivity : AppCompatActivity() {
         }
         updateTimerOneClickable()
     }
-
     private fun toggleTimerTwo(pause: Boolean? = null) {
         if (pause != null) {
             if (pause) {
@@ -197,15 +208,9 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun updateTimerOneClickable() {
-        binding.displayTimerOne.setTextAppearance(
-            if (isTimerOnePaused) com.google.android.material.R.style.Widget_Material3_Button_OutlinedButton
-            else com.google.android.material.R.style.Widget_Material3_Button)
         binding.displayTimerOne.alpha = if (isTimerOnePaused) 0.5f else 1f
     }
     private fun updateTimerTwoClickable() {
-        binding.displayTimerTwo.setTextAppearance(
-            if (isTimerTwoPaused) com.google.android.material.R.style.Widget_Material3_Button_OutlinedButton
-            else com.google.android.material.R.style.Widget_Material3_Button)
         binding.displayTimerTwo.alpha = if (isTimerTwoPaused) 0.5f else 1f
     }
 
@@ -218,8 +223,8 @@ class TimerActivity : AppCompatActivity() {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }
         binding.displayTimerOne.text = millisToTimeFormat(timerDuration)
-        binding.displayTimerOne.alpha = 1f
         binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
+        binding.displayTimerOne.alpha = 1f
         binding.displayTimerTwo.alpha = 1f
         timerStarted = false
         isPaused = false

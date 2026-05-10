@@ -37,6 +37,11 @@ abstract class CountDownTimerExt(var mMillisInFuture: Long, var mInterval: Long)
         }
     }
 
+    fun incrementTime(millis: Long): Long {
+        remainingTime += millis
+        return remainingTime
+    }
+
     fun pause() {
         if (!isTimerPaused) {
             countDownTimer.cancel()

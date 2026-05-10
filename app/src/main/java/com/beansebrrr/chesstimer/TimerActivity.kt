@@ -1,8 +1,13 @@
 package com.beansebrrr.chesstimer
 
 import android.annotation.SuppressLint
+import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.media.RingtoneManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,12 +22,13 @@ class TimerActivity : AppCompatActivity() {
     enum class Timer {
         ONE, TWO
     }
+    var currentTimer: Timer = Timer.ONE
+
 
     private lateinit var binding: ActivityTimerBinding
     private var isPaused: Boolean = false
-    private var isTimerOnePaused: Boolean = true
-    private var isTimerTwoPaused: Boolean = true
-    private var timerStarted: Boolean = false
+    private var isEnded: Boolean = false
+    private var firstClick: Boolean = true
 
     private lateinit var timerOne: CountDownTimerExt
     private lateinit var timerTwo: CountDownTimerExt
@@ -45,7 +51,6 @@ class TimerActivity : AppCompatActivity() {
         timerDuration = intent.getLongExtra("TIMER_DURATION", 300000)
         timerIncrement = intent.getLongExtra("TIMER_INCREMENT", 5000)
 
-
         timerOne = object : CountDownTimerExt(timerDuration, 10) {
             override fun onTimerTick(millisUntilFinished: Long) {
                 binding.displayTimerOne.text = millisToTimeFormat(millisUntilFinished)
@@ -53,6 +58,8 @@ class TimerActivity : AppCompatActivity() {
 
             override fun onTimerFinish() {
                 binding.displayTimerOne.text = "00:00.00"
+                isEnded = true
+                onEnd()
             }
         }
         timerTwo = object : CountDownTimerExt(timerDuration, 10) {
@@ -62,159 +69,135 @@ class TimerActivity : AppCompatActivity() {
 
             override fun onTimerFinish() {
                 binding.displayTimerTwo.text = "00:00.00"
+                isEnded = true
+                onEnd()
             }
         }
 
-        binding.displayTimerOne.text = millisToTimeFormat(timerDuration)
-        binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
-        updatePauseBtnState()
+        resetTimers()
+
+        binding.displayTimerOne.setOnClickListener {
+            if (firstClick) {
+                toggleCurrentTimer(Timer.TWO)
+                firstClick = false
+            } else if (isEnded) {
+                onEnd()
+            }
+            toggleCurrentTimer()
+            startTimer()
+        }
+        binding.displayTimerTwo.setOnClickListener {
+            if (firstClick) {
+                toggleCurrentTimer(Timer.ONE)
+                firstClick = false
+            } else if (isEnded) {
+                onEnd()
+            }
+            toggleCurrentTimer()
+            startTimer()
+        }
 
         binding.btnPauseStart.setOnClickListener {
-            if (!timerStarted) {
+            if (firstClick) {
                 Toast.makeText(
                     this,
                     "Press one side to start the timer",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                togglePauseTimers()
+                togglePause()
             }
         }
-        binding.btnExit.setOnClickListener {
-            togglePauseTimers(true)
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Are you sure?")
-                .setMessage("Are you sure you want to exit?")
-                .setNegativeButton("Stay") { _, _ -> }
-                .setPositiveButton("Exit") { _, _ -> finish() }
-                .show()
-        }
         binding.btnReset.setOnClickListener {
-            togglePauseTimers(true)
+            pause()
             MaterialAlertDialogBuilder(this)
                 .setTitle("Are you sure?")
                 .setMessage("Are you sure you want to restart this timer?")
-                .setPositiveButton("Yes") { _, _ -> restartTimers() }
-                .setNegativeButton("No") { _, _ -> }
+                .setPositiveButton("Yes") { _, _ -> resetTimers() }
+                .setNegativeButton("No") { _, _ -> unpause() }
                 .show()
         }
 
-        binding.displayTimerOne.setOnClickListener {
-            if (!isPaused) switchTimerRunning(Timer.ONE)
-            else Toast.makeText(this, "Timer is still paused!", Toast.LENGTH_SHORT).show()
+        binding.btnExit.setOnClickListener { onExitAction() }
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() { onExitAction() }
         }
-        binding.displayTimerTwo.setOnClickListener {
-            if (!isPaused) switchTimerRunning(Timer.TWO)
-            else Toast.makeText(this, "Timer is still paused!", Toast.LENGTH_SHORT).show()
+        onBackPressedDispatcher.addCallback(callback)
+    }
+
+    private fun toggleCurrentTimer(timer: Timer? = null) {
+        // Toggles between the two timers
+        // Allows for the currentTimer to be set manually
+        currentTimer = timer
+            ?: when (currentTimer) {
+                Timer.ONE -> Timer.TWO
+                Timer.TWO -> Timer.ONE
+            }
+    }
+
+    private fun startTimer() {
+        if (firstClick) { return }
+        when (currentTimer) {
+            Timer.ONE -> {
+                timerOne.start()
+                timerTwo.pause()
+                val inc = timerTwo.incrementTime(timerIncrement)
+                binding.displayTimerTwo.text = millisToTimeFormat(inc)
+                updateClickableTimers()
+            }
+            Timer.TWO -> {
+                timerTwo.start()
+                timerOne.pause()
+                val inc = timerOne.incrementTime(timerIncrement)
+                binding.displayTimerOne.text = millisToTimeFormat(inc)
+                updateClickableTimers()
+            }
         }
     }
 
-    private fun switchTimerRunning(timer: Timer) {
-        if (!timerStarted) {
-            timerStarted = true
-            when (timer) {
-                Timer.ONE -> {
-                    toggleTimerOne(false)
-                    toggleTimerTwo(true)
-                }
-                Timer.TWO -> {
-                    toggleTimerOne(true)
-                    toggleTimerTwo(false)
-                }
-            }
+    private fun togglePause() {
+        if (isPaused) {
+            unpause()
         } else {
-            when (timer) {
-                Timer.ONE -> {
-                    val inc = timerOne.incrementTime(timerIncrement)
-                    binding.displayTimerOne.text = millisToTimeFormat(inc)
-                    toggleTimerOne(true)
-                    toggleTimerTwo(false)
-                }
-                Timer.TWO -> {
-                    val inc = timerTwo.incrementTime(timerIncrement)
-                    binding.displayTimerTwo.text = millisToTimeFormat(inc)
-                    toggleTimerOne(false)
-                    toggleTimerTwo(true)
-                }
-            }
+            pause()
         }
-        updatePauseBtnState()
     }
 
-    private fun togglePauseTimers(pause: Boolean? = null) {
-        // 90 if-statements lawd save me
-        if (pause != null) {
-            if (pause) { pauseAction() }
-            else { unpauseAction() }
-        } else if (isPaused) { unpauseAction()
-        } else { pauseAction() }
-        updatePauseBtnState()
-    }
-    private fun pauseAction() {
+    private fun pause() {
         timerOne.pause()
         timerTwo.pause()
+        binding.displayTimerOne.alpha = 0.5f
+        binding.displayTimerTwo.alpha = 0.5f
         isPaused = true
+        updatePauseBtnState()
     }
-    private fun unpauseAction() {
-        if (!isTimerTwoPaused && isTimerOnePaused) {
-            switchTimerRunning(Timer.ONE)
-        } else if (!isTimerOnePaused && isTimerTwoPaused) {
-            switchTimerRunning(Timer.TWO)
-        } else {
-            Toast.makeText(
-                this,
-                "Something went wrong and I'm honestly not sure what",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+
+    private fun unpause() {
         isPaused = false
+        startTimer()
+        updateClickableTimers()
+        updatePauseBtnState()
     }
 
-    private fun toggleTimerOne(pause: Boolean? = null) {
-        if (pause != null) {
-            if (pause) {
-                timerOne.pause()
-                isTimerOnePaused = true
-            } else {
-                timerOne.start()
-                isTimerOnePaused = false
-            }
-        } else if (isTimerOnePaused) {
-            timerOne.start()
-            isTimerOnePaused = false
+    private fun updateClickableTimers() {
+        if (firstClick) {
+            binding.displayTimerOne.alpha = 1f
+            binding.displayTimerTwo.alpha = 1f
+            binding.displayTimerOne.isClickable = true
+            binding.displayTimerTwo.isClickable = true
+        } else if (currentTimer == Timer.ONE) {
+            binding.displayTimerOne.alpha = 1f
+            binding.displayTimerTwo.alpha = 0.5f
+            binding.displayTimerOne.isClickable = true
+            binding.displayTimerTwo.isClickable = false
         } else {
-            timerOne.pause()
-            isTimerOnePaused = true
+            binding.displayTimerOne.alpha = 0.5f
+            binding.displayTimerTwo.alpha = 1f
+            binding.displayTimerOne.isClickable = false
+            binding.displayTimerTwo.isClickable = true
         }
-        updateTimerOneClickable()
     }
-    private fun toggleTimerTwo(pause: Boolean? = null) {
-        if (pause != null) {
-            if (pause) {
-                timerTwo.pause()
-                isTimerTwoPaused = true
-            } else {
-                timerTwo.start()
-                isTimerTwoPaused = false
-            }
-        } else if (isTimerTwoPaused) {
-            timerTwo.start()
-            isTimerTwoPaused = false
-        } else {
-            timerTwo.pause()
-            isTimerTwoPaused = true
-        }
-        updateTimerTwoClickable()
-    }
-
-    private fun updateTimerOneClickable() {
-        binding.displayTimerOne.alpha = if (isTimerOnePaused) 0.5f else 1f
-    }
-    private fun updateTimerTwoClickable() {
-        binding.displayTimerTwo.alpha = if (isTimerTwoPaused) 0.5f else 1f
-    }
-
-    private fun restartTimers() {
+    private fun resetTimers() {
         try {
             timerOne.restart()
             timerTwo.restart()
@@ -226,7 +209,7 @@ class TimerActivity : AppCompatActivity() {
         binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
         binding.displayTimerOne.alpha = 1f
         binding.displayTimerTwo.alpha = 1f
-        timerStarted = false
+        firstClick = true
         isPaused = false
     }
 
@@ -236,6 +219,38 @@ class TimerActivity : AppCompatActivity() {
             else R.drawable.baseline_pause_24
         )
     }
+
+    private fun onExitAction() {
+        pause()
+        MaterialAlertDialogBuilder(this@TimerActivity)
+            .setTitle("Are you sure?")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Exit") { _, _ -> finish() }
+            .setNegativeButton("Stay") { _, _ -> unpause()}
+            .show()
+    }
+
+    private fun onEnd() {
+        binding.displayTimerOne.isClickable = false
+        binding.displayTimerTwo.isClickable = false
+        MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build()
+            )
+            setDataSource(applicationContext, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            prepare()
+            start()
+        }
+        Toast.makeText(
+            this,
+            "The game has ended",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
 
     @SuppressLint("DefaultLocale")
     private fun millisToTimeFormat(millis: Long): String {

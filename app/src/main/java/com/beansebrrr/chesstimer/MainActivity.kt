@@ -3,6 +3,7 @@ package com.beansebrrr.chesstimer
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,7 +13,6 @@ import com.beansebrrr.chesstimer.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var isPaused: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +27,38 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         binding.btnSubmit.setOnClickListener {
+            var timerDuration: Long?
+            var timerIncrement: Long?
+
+            try {
+                timerDuration = binding.inputTimerDuration.editText?.text.toString().toLong()
+                timerIncrement = binding.inputTimerIncrement.editText?.text.toString().toLong()
+            } catch (e: NumberFormatException) {
+                Toast.makeText(
+                    this,
+                    "Please enter a valid duration -_-",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            if (timerDuration < 0 || timerIncrement < 0) {
+                Toast.makeText(
+                    this,
+                    "Please enter a valid duration -_-",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
             val timerIntent = Intent(
                 this,
                 TimerActivity::class.java
             )
-            timerIntent.putExtra("TIMER_DURATION", 300000L)
-            timerIntent.putExtra("TIMER_INCREMENT", 5000L)
+            timerIntent.putExtra("TIMER_DURATION", timerDuration * 60000L)
+            timerIntent.putExtra("TIMER_INCREMENT", timerIncrement * 1000L)
             startActivity(timerIntent)
         }
     }

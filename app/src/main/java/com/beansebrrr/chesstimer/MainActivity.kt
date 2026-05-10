@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 this,
                 TimerActivity::class.java
             )
-            timerIntent.putExtra("TIMER_DURATION", 1000000000.toLong())
+            timerIntent.putExtra("TIMER_DURATION", 300000.toLong())
             startActivity(timerIntent)
         }
     }

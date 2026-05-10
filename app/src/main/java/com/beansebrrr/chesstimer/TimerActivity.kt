@@ -14,13 +14,20 @@ import kotlin.properties.Delegates
 
 class TimerActivity : AppCompatActivity() {
 
+    enum class Timer {
+        ONE, TWO
+    }
+
     private lateinit var binding: ActivityTimerBinding
-    private var isPaused: Boolean = true
+    private var isPaused: Boolean = false
+    private var isTimerOnePaused: Boolean = true
+    private var isTimerTwoPaused: Boolean = true
+    private var timerStarted: Boolean = false
 
     private lateinit var timerOne: CountDownTimerExt
     private lateinit var timerTwo: CountDownTimerExt
-
     private var timerDuration by Delegates.notNull<Long>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,29 +85,128 @@ class TimerActivity : AppCompatActivity() {
                 .setNegativeButton("No") { _, _ -> }
                 .show()
         }
+
+        binding.displayTimerOne.setOnClickListener {
+            if (!isPaused) switchTimerRunning(Timer.ONE)
+            else Toast.makeText(this, "Timer is still paused!", Toast.LENGTH_SHORT).show()
+        }
+        binding.displayTimerTwo.setOnClickListener {
+            if (!isPaused) switchTimerRunning(Timer.TWO)
+            else Toast.makeText(this, "Timer is still paused!", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun togglePauseTimers(shouldPause: Boolean? = null) {
-        if (shouldPause != null) {
-            if (shouldPause) {
-                timerOne.pause()
-                timerTwo.pause()
-                isPaused = true
-            } else {
-                timerOne.start()
-                timerTwo.start()
-                isPaused = false
+    private fun switchTimerRunning(timer: Timer) {
+        if (!timerStarted) {
+            timerStarted = true
+            when (timer) {
+                Timer.ONE -> {
+                    toggleTimerOne(false)
+                    toggleTimerTwo(true)
+                }
+                Timer.TWO -> {
+                    toggleTimerOne(true)
+                    toggleTimerTwo(false)
+                }
             }
-        } else if (isPaused) {
-            timerOne.start()
-            timerTwo.start()
-            isPaused = false
         } else {
-            timerOne.pause()
-            timerTwo.pause()
-            isPaused = true
+            when (timer) {
+                Timer.ONE -> {
+                    toggleTimerOne(true)
+                    toggleTimerTwo(false)
+                }
+                Timer.TWO -> {
+                    toggleTimerOne(false)
+                    toggleTimerTwo(true)
+                }
+            }
         }
         updatePauseBtnState()
+    }
+
+    private fun togglePauseTimers(pause: Boolean? = null) {
+        if (!timerStarted) {
+            Toast.makeText(
+                this,
+                "Press one side to start the timer",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        // 90 if-statements lawd save me
+        if (pause != null) {
+            if (pause) { pauseAction() }
+            else { unpauseAction() }
+        } else if (isPaused) { unpauseAction()
+        } else { pauseAction() }
+        updatePauseBtnState()
+    }
+    private fun pauseAction() {
+        timerOne.pause()
+        timerTwo.pause()
+        isPaused = true
+    }
+    private fun unpauseAction() {
+        if (!isTimerTwoPaused && isTimerOnePaused) {
+            switchTimerRunning(Timer.ONE)
+        } else if (!isTimerOnePaused && isTimerTwoPaused) {
+            switchTimerRunning(Timer.TWO)
+        } else {
+            Toast.makeText(this, "Something sucky happened and you suck", Toast.LENGTH_SHORT).show()
+        }
+        isPaused = false
+    }
+
+    private fun toggleTimerOne(pause: Boolean? = null) {
+        if (pause != null) {
+            if (pause) {
+                timerOne.pause()
+                isTimerOnePaused = true
+            } else {
+                timerOne.start()
+                isTimerOnePaused = false
+            }
+        } else if (isTimerOnePaused) {
+            timerOne.start()
+            isTimerOnePaused = false
+        } else {
+            timerOne.pause()
+            isTimerOnePaused = true
+        }
+        updateTimerOneClickable()
+    }
+
+    private fun toggleTimerTwo(pause: Boolean? = null) {
+        if (pause != null) {
+            if (pause) {
+                timerTwo.pause()
+                isTimerTwoPaused = true
+            } else {
+                timerTwo.start()
+                isTimerTwoPaused = false
+            }
+        } else if (isTimerTwoPaused) {
+            timerTwo.start()
+            isTimerTwoPaused = false
+        } else {
+            timerTwo.pause()
+            isTimerTwoPaused = true
+        }
+        updateTimerTwoClickable()
+    }
+
+    private fun updateTimerOneClickable() {
+        binding.displayTimerOne.setTextAppearance(
+            if (isTimerOnePaused) com.google.android.material.R.style.Widget_Material3_Button_OutlinedButton
+            else com.google.android.material.R.style.Widget_Material3_Button)
+        binding.displayTimerOne.alpha = if (isTimerOnePaused) 0.5f else 1f
+    }
+    private fun updateTimerTwoClickable() {
+        binding.displayTimerTwo.setTextAppearance(
+            if (isTimerTwoPaused) com.google.android.material.R.style.Widget_Material3_Button_OutlinedButton
+            else com.google.android.material.R.style.Widget_Material3_Button)
+        binding.displayTimerTwo.alpha = if (isTimerTwoPaused) 0.5f else 1f
     }
 
     private fun restartTimers() {
@@ -112,7 +218,11 @@ class TimerActivity : AppCompatActivity() {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
         }
         binding.displayTimerOne.text = millisToTimeFormat(timerDuration)
+        binding.displayTimerOne.alpha = 1f
         binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
+        binding.displayTimerTwo.alpha = 1f
+        timerStarted = false
+        isPaused = false
     }
 
     private fun updatePauseBtnState() {

@@ -162,11 +162,8 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun togglePause() {
-        if (isPaused) {
-            unpause()
-        } else {
-            pause()
-        }
+        if (isPaused) { unpause() }
+        else { pause() }
     }
 
     private fun pause() {
@@ -179,8 +176,9 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun unpause() {
+        if (firstClick) { return }
         isPaused = false
-        startTimer(false)
+        startTimer(shouldIncrement = false)
         updateClickableTimers()
         updatePauseBtnState()
     }
@@ -215,8 +213,11 @@ class TimerActivity : AppCompatActivity() {
         binding.displayTimerTwo.text = millisToTimeFormat(timerDuration)
         binding.displayTimerOne.alpha = 1f
         binding.displayTimerTwo.alpha = 1f
+        binding.displayTimerOne.isClickable = true
+        binding.displayTimerTwo.isClickable = true
         firstClick = true
         isPaused = false
+        updatePauseBtnState()
     }
 
     private fun updatePauseBtnState() {
@@ -232,7 +233,7 @@ class TimerActivity : AppCompatActivity() {
             .setTitle("Are you sure?")
             .setMessage("Are you sure you want to exit?")
             .setPositiveButton("Exit") { _, _ -> finish() }
-            .setNegativeButton("Stay") { _, _ -> unpause()}
+            .setNegativeButton("Stay") { _, _ -> unpause() }
             .show()
     }
 
@@ -260,13 +261,13 @@ class TimerActivity : AppCompatActivity() {
 
     @SuppressLint("DefaultLocale")
     private fun millisToTimeFormat(millis: Long): String {
-        val remainderMillisToHundredths = (millis % 1000) / 10
+        val remainderMillis = (millis % 1000)
         val seconds = (millis / 1000) % 60
-        val minutes = (millis / (1000 * 60)) % 60
-        return String.format("%02d:%02d.%02d",
+        val minutes = (millis / (1000 * 60))
+        return String.format("%02d:%02d.%03d",
             minutes,
             seconds,
-            remainderMillisToHundredths
+            remainderMillis
         )
     }
 }

@@ -2,10 +2,13 @@ package com.beansebrrr.chesstimer
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.beansebrrr.chesstimer.databinding.ActivityMainBinding
@@ -25,8 +28,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        val preferences = getSharedPreferences("prefs", MODE_PRIVATE)
         setContentView(binding.root)
 
+        val savedDuration = preferences.getLong("TIMER_DURATION_MINUTES", 10).toString()
+        val savedIncrement = preferences.getLong("TIMER_INCREMENT_SECONDS", 5).toString()
+
+        binding.inputTimerDuration.editText?.text = SpannableStringBuilder(savedDuration)
+        binding.inputTimerIncrement.editText?.text = SpannableStringBuilder(savedIncrement)
 
         binding.btnSubmit.setOnClickListener {
             var timerDuration: Long?
@@ -44,6 +53,11 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            preferences.edit {
+                putLong("TIMER_DURATION_MINUTES", timerDuration)
+                putLong("TIMER_INCREMENT_SECONDS", timerIncrement)
+            }
+
             if (timerDuration < 0 || timerIncrement < 0) {
                 Toast.makeText(
                     this,
@@ -52,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
             val timerIntent = Intent(
                 this,
                 TimerActivity::class.java

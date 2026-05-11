@@ -12,20 +12,17 @@
 
     <Button
         android:id="@+id/displayTimerOne"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        style="@style/Widget.Material3Expressive.Button.TonalButton"
+        app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.Xlarge.Square"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:rotation="180"
-        android:textSize="36sp"
-        android:text="@string/timer_zero"
-        android:fontFamily="monospace"
-        android:textStyle="bold"
-        app:cornerRadius="16dp" />
+        android:text="@string/timer_zero" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="4dp"/>
+        android:layout_height="8dp"/>
 
     <com.google.android.material.button.MaterialButtonGroup
         android:layout_width="match_parent"
@@ -39,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
-            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
             android:layout_weight="1"
             app:icon="@drawable/baseline_restart_alt_24"/>
@@ -49,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
-            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
             android:layout_weight="1"
             app:icon="@drawable/baseline_pause_24"/>
@@ -60,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
-            style="@style/Widget.Material3Expressive.Button.IconButton.Tonal"
+            style="@style/Widget.Material3Expressive.Button.IconButton"
             app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide"
             android:layout_weight="1"
             app:icon="@drawable/baseline_exit_to_app_24"/>
@@ -69,18 +66,15 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="4dp"/>
+        android:layout_height="8dp"/>
 
     <Button
         android:id="@+id/displayTimerTwo"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        style="@style/Widget.Material3Expressive.Button.TonalButton"
+        app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.Xlarge.Square"
         android:text="@string/timer_zero"
-        android:textSize="36sp"
-        android:fontFamily="monospace"
-        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        app:cornerRadius="16dp" />
+        android:layout_weight="1" />
 
 </LinearLayout>

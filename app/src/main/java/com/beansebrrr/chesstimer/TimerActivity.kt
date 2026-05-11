@@ -57,7 +57,7 @@ class TimerActivity : AppCompatActivity() {
             }
 
             override fun onTimerFinish() {
-                binding.displayTimerOne.text = "00:00.00"
+                binding.displayTimerOne.text = "00:00.000"
                 isEnded = true
                 onEnd()
             }
@@ -68,7 +68,7 @@ class TimerActivity : AppCompatActivity() {
             }
 
             override fun onTimerFinish() {
-                binding.displayTimerTwo.text = "00:00.00"
+                binding.displayTimerTwo.text = "00:00.000"
                 isEnded = true
                 onEnd()
             }
@@ -107,6 +107,7 @@ class TimerActivity : AppCompatActivity() {
             }
         }
         binding.btnReset.setOnClickListener {
+            if (firstClick) return@setOnClickListener
             pause()
             MaterialAlertDialogBuilder(this)
                 .setTitle("Are you sure?")
@@ -179,7 +180,7 @@ class TimerActivity : AppCompatActivity() {
     }
 
     private fun unpause() {
-        if (firstClick) { return }
+        if (firstClick || isEnded) { return }
         isPaused = false
         startTimer(shouldIncrement = false)
         updateClickableTimers()

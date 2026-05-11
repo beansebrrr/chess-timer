@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Chess Timer</string>
+    <string name="btn_help_description">Help</string>
+    <string name="chess_timer">Chess Timer</string>
+    <string name="textfield_duration_hint">Minutes per player</string>
+    <string name="textfield_increment_hint">Incremented seconds per turn</string>
+    <string name="default_duration">10</string>
+    <string name="default_increment">5</string>
+    <string name="start">Start</string>
+    <string name="exit">Exit</string>
+    <string name="pause_unpause_timer">Pause/Unpause Timer</string>
+    <string name="reset_timer">Reset Timer</string>
+    <string name="timer_zero">00:00.000</string>
 </resources>

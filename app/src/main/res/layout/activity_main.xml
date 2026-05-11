@@ -18,18 +18,31 @@
         android:layout_marginVertical="64dp"
         android:layout_marginEnd="32dp"
         app:srcCompat="@drawable/baseline_question_mark_24"
-        android:contentDescription="Help"
+        android:contentDescription="@string/btn_help_description"
         app:materialThemeOverlay="@style/ThemeOverlay.Material3Expressive.FloatingActionButton.Secondary"/>
 
-    <TextView
+
+    <ImageView
+        android:id="@+id/chessIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/chess_timer"
+        android:src="@drawable/chess_icon"
+        app:layout_constraintBottom_toTopOf="@id/headingText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/inputForm"
-        android:text="Chess Timer"
+        android:layout_marginTop="96dp" />
+    <TextView
+        android:layout_marginTop="16dp"
+        android:id="@+id/headingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/chessIcon"
+        android:text="@string/chess_timer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/TextAppearance.AppCompat.Display1"/>
+        style="@style/TextAppearance.AppCompat.Display1" />
 
     <LinearLayout
         android:id="@+id/inputForm"
@@ -41,21 +54,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6">
+        app:layout_constraintTop_toBottomOf="@id/headingText"
+        app:layout_constraintVertical_bias="0.1">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputTimerDuration"
             style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Minutes per player">
+            android:hint="@string/textfield_duration_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="10" />
+                android:text="@string/default_duration" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Space
@@ -67,13 +80,13 @@
             style="?attr/textInputOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Extra Seconds">
+            android:hint="@string/textfield_increment_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="5" />
+                android:text="@string/default_increment" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Space
@@ -85,7 +98,7 @@
             style="@style/Widget.Material3Expressive.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start"
+            android:text="@string/start"
             app:materialSizeOverlay="@style/SizeOverlay.Material3Expressive.Button.Large" />
 
     </LinearLayout>

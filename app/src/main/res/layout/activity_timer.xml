@@ -18,7 +18,7 @@
         android:layout_weight="1"
         android:rotation="180"
         android:textSize="36sp"
-        android:text="00:00.00"
+        android:text="@string/timer_zero"
         android:fontFamily="monospace"
         android:textStyle="bold"
         app:cornerRadius="16dp" />
@@ -35,7 +35,7 @@
         android:spacing="4dp">
         <Button
             android:id="@+id/btnReset"
-            android:contentDescription="Reset Timer"
+            android:contentDescription="@string/reset_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
@@ -45,7 +45,7 @@
             app:icon="@drawable/baseline_restart_alt_24"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPauseStart"
-            android:contentDescription="Pause/Unpause Timer"
+            android:contentDescription="@string/pause_unpause_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
@@ -56,7 +56,7 @@
 
         <Button
             android:id="@+id/btnExit"
-            android:contentDescription="Exit"
+            android:contentDescription="@string/exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:iconGravity="textStart"
@@ -74,7 +74,7 @@
     <Button
         android:id="@+id/displayTimerTwo"
         style="@style/Widget.Material3.Button.OutlinedButton"
-        android:text="00:00.00"
+        android:text="@string/timer_zero"
         android:textSize="36sp"
         android:fontFamily="monospace"
         android:textStyle="bold"

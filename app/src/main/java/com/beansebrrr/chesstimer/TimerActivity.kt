@@ -79,7 +79,6 @@ class TimerActivity : AppCompatActivity() {
         binding.displayTimerOne.setOnClickListener {
             if (firstClick) {
                 toggleCurrentTimer(Timer.TWO)
-                firstClick = false
             } else if (isEnded) {
                 onEnd()
             }
@@ -89,7 +88,6 @@ class TimerActivity : AppCompatActivity() {
         binding.displayTimerTwo.setOnClickListener {
             if (firstClick) {
                 toggleCurrentTimer(Timer.ONE)
-                firstClick = false
             } else if (isEnded) {
                 onEnd()
             }
@@ -135,21 +133,29 @@ class TimerActivity : AppCompatActivity() {
             }
     }
 
-    private fun startTimer() {
-        if (firstClick) { return }
+    private fun startTimer(shouldIncrement: Boolean = true) {
+
         when (currentTimer) {
             Timer.ONE -> {
                 timerOne.start()
                 timerTwo.pause()
-                val inc = timerTwo.incrementTime(timerIncrement)
-                binding.displayTimerTwo.text = millisToTimeFormat(inc)
+                if (firstClick) {
+                    firstClick = false
+                } else if (shouldIncrement) {
+                    val inc = timerTwo.incrementTime(timerIncrement)
+                    binding.displayTimerTwo.text = millisToTimeFormat(inc)
+                }
                 updateClickableTimers()
             }
             Timer.TWO -> {
                 timerTwo.start()
                 timerOne.pause()
-                val inc = timerOne.incrementTime(timerIncrement)
-                binding.displayTimerOne.text = millisToTimeFormat(inc)
+                if (firstClick) {
+                    firstClick = false
+                } else if (shouldIncrement) {
+                    val inc = timerOne.incrementTime(timerIncrement)
+                    binding.displayTimerOne.text = millisToTimeFormat(inc)
+                }
                 updateClickableTimers()
             }
         }
@@ -174,7 +180,7 @@ class TimerActivity : AppCompatActivity() {
 
     private fun unpause() {
         isPaused = false
-        startTimer()
+        startTimer(false)
         updateClickableTimers()
         updatePauseBtnState()
     }

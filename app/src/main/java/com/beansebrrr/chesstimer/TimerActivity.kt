@@ -111,6 +111,7 @@ class TimerActivity : AppCompatActivity() {
                 .setMessage("Are you sure you want to restart this timer?")
                 .setPositiveButton("Yes") { _, _ -> resetTimers() }
                 .setNegativeButton("No") { _, _ -> unpause() }
+                .setOnDismissListener { unpause() }
                 .show()
         }
 
@@ -234,6 +235,7 @@ class TimerActivity : AppCompatActivity() {
             .setMessage("Are you sure you want to exit?")
             .setPositiveButton("Exit") { _, _ -> finish() }
             .setNegativeButton("Stay") { _, _ -> unpause() }
+            .setOnDismissListener { unpause() }
             .show()
     }
 

@@ -1,8 +1,6 @@
 package com.beansebrrr.chesstimer
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.widget.Toast

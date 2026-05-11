@@ -7,14 +7,12 @@ import android.media.RingtoneManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.beansebrrr.chesstimer.databinding.ActivityTimerBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.io.path.Path
 import kotlin.properties.Delegates
 
 class TimerActivity : AppCompatActivity() {

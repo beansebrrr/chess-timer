@@ -10,6 +10,7 @@ import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.beansebrrr.chesstimer.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
         val savedDuration = preferences.getLong("TIMER_DURATION_MINUTES", 10).toString()
         val savedIncrement = preferences.getLong("TIMER_INCREMENT_SECONDS", 5).toString()
-
         binding.inputTimerDuration.editText?.text = SpannableStringBuilder(savedDuration)
         binding.inputTimerIncrement.editText?.text = SpannableStringBuilder(savedIncrement)
 
@@ -71,6 +71,20 @@ class MainActivity : AppCompatActivity() {
             timerIntent.putExtra("TIMER_DURATION", timerDuration * 60000L)
             timerIntent.putExtra("TIMER_INCREMENT", timerIncrement * 1000L)
             startActivity(timerIntent)
+        }
+
+        binding.btnHelp.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Chess Timer")
+                .setMessage("""
+                    This is a simple chess clock which you can place beside your chessboard.
+                    
+                    You can configure settings such as the base duration and the time incremented after every turn.
+                    
+                    When you're ready, you can start the timer by tapping the side of the clock that will start, and use the timer as any chess clock.
+                """.trimIndent())
+                .setPositiveButton("Got it!") { _, _ -> }
+                .show()
         }
     }
 }

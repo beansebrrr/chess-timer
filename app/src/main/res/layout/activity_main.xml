@@ -8,6 +8,19 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?attr/floatingActionButtonStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="64dp"
+        android:layout_marginEnd="32dp"
+        app:srcCompat="@drawable/baseline_question_mark_24"
+        android:contentDescription="Help"
+        app:materialThemeOverlay="@style/ThemeOverlay.Material3Expressive.FloatingActionButton.Secondary"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

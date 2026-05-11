@@ -169,6 +169,8 @@ class TimerActivity : AppCompatActivity() {
         timerTwo.pause()
         binding.displayTimerOne.alpha = 0.5f
         binding.displayTimerTwo.alpha = 0.5f
+        binding.displayTimerOne.isClickable = false
+        binding.displayTimerTwo.isClickable = false
         isPaused = true
         updatePauseBtnState()
     }

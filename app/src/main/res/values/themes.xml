@@ -48,5 +48,9 @@
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
 
-    <style name="Theme.ChessTimer" parent="Base.Theme.ChessTimer"/>
+    <style name="Theme.ChessTimer" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/md_theme_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/chess_icon</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.ChessTimer</item>
+    </style>
 </resources>

@@ -51,4 +51,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.material.v1140rc01)
+    implementation(libs.androidx.core.splashscreen)
 }
